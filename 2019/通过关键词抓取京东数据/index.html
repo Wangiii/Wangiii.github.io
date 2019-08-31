@@ -6,20 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://wangiii.github.io">
-  <title>做自己喜欢的事 | angiii</title>
+  <title>通过关键词抓取京东数据 | angiii</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="人一辈子的时间有限，宁可因为喜欢的事情而消耗时间，也不要因为讨厌的事情而错过时间。">
-<meta name="keywords" content="随想">
+  <meta name="description" content="写了个脚本抓取了京东的数据，下面是实战的过程还有解决踩到的坑。 需求现在有几份 2W 多条商品关键词的 Excel 文件，然后要拿关键词在京东搜索，并把该关键词的总商品数和前八个搜索结果的价格和评论数记录回 Excel 文件。 分析一下">
+<meta name="keywords" content="实战记录">
 <meta property="og:type" content="article">
-<meta property="og:title" content="做自己喜欢的事">
-<meta property="og:url" content="https://wangiii.github.io/2018/做自己喜欢的事/index.html">
+<meta property="og:title" content="通过关键词抓取京东数据">
+<meta property="og:url" content="https://wangiii.github.io/2019/通过关键词抓取京东数据/index.html">
 <meta property="og:site_name" content="angiii">
-<meta property="og:description" content="人一辈子的时间有限，宁可因为喜欢的事情而消耗时间，也不要因为讨厌的事情而错过时间。">
+<meta property="og:description" content="写了个脚本抓取了京东的数据，下面是实战的过程还有解决踩到的坑。 需求现在有几份 2W 多条商品关键词的 Excel 文件，然后要拿关键词在京东搜索，并把该关键词的总商品数和前八个搜索结果的价格和评论数记录回 Excel 文件。 分析一下">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-08-30T02:45:10.842Z">
+<meta property="og:updated_time" content="2019-08-31T11:08:03.303Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="做自己喜欢的事">
-<meta name="twitter:description" content="人一辈子的时间有限，宁可因为喜欢的事情而消耗时间，也不要因为讨厌的事情而错过时间。">
+<meta name="twitter:title" content="通过关键词抓取京东数据">
+<meta name="twitter:description" content="写了个脚本抓取了京东的数据，下面是实战的过程还有解决踩到的坑。 需求现在有几份 2W 多条商品关键词的 Excel 文件，然后要拿关键词在京东搜索，并把该关键词的总商品数和前八个搜索结果的价格和评论数记录回 Excel 文件。 分析一下">
   
     <link rel="alternative" href="/atom.xml" title="angiii" type="application/atom+xml">
   
@@ -153,27 +153,55 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-做自己喜欢的事" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-通过关键词抓取京东数据" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      做自己喜欢的事
+      通过关键词抓取京东数据
     </h1>
   
 
         
-        <a href="/2018/做自己喜欢的事/" class="archive-article-date">
-  	<time datetime="2018-09-16T10:36:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-16</time>
+        <a href="/2019/通过关键词抓取京东数据/" class="archive-article-date">
+  	<time datetime="2019-08-31T08:48:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-08-31</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>人一辈子的时间有限，<br>宁可因为喜欢的事情而消耗时间，<br>也不要因为讨厌的事情而错过时间。</p>
+        <p>写了个脚本抓取了京东的数据，下面是实战的过程还有解决踩到的坑。</p>
+<h3 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h3><p>现在有几份 2W 多条商品关键词的 Excel 文件，然后要拿关键词在京东搜索，并把该关键词的总商品数和前八个搜索结果的价格和评论数记录回 Excel 文件。</p>
+<h3 id="分析一下"><a href="#分析一下" class="headerlink" title="分析一下"></a>分析一下</h3><a id="more"></a>
+<ol>
+<li>要把关键词从 Excel 中取出，用了 <a href="https://github.com/PHPOffice/PhpSpreadsheet" target="_blank" rel="noopener">PHPOffice/PhpSpreadsheet</a></li>
+<li>要在京东搜索，所以需要一个 http 客户端，我比较喜欢用 <a href="https://github.com/guzzle/guzzle" target="_blank" rel="noopener">guzzle</a></li>
+<li>把京东的搜索页抓下来，然后要用 <a href="https://github.com/bupt1987/html-parser" target="_blank" rel="noopener">html-parser</a> 来解析一下我们需要的几个数据<h3 id="开始动手"><a href="#开始动手" class="headerlink" title="开始动手"></a>开始动手</h3>经过上面的分析，需要三个包，用 composer 安装一下<br><code>php composer.phar require guzzlehttp/guzzle</code><br><code>php composer.phar require phpoffice/phpspreadsheet</code><br><code>php composer.phar require bupt1987/html-parser</code><br>然后把自动加载引进来<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">require &apos;vendor/autoload.php&apos;;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>为了让脚步正常运行，修改一下 php 的配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ini_set(&apos;memory_limit&apos;, &apos;1024M&apos;);</span><br></pre></td></tr></table></figure>
+
+<p>首先把关键词从 Excel 里面拿到，然后 new 一个 http 客户端,<br>开始抓取，因为磁盘 IO 的速度相对比较慢，所以每抓一百个关键词后再写入文件。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">function dosheet() &#123;</span><br><span class="line">    $inputFileName = &apos;/Users/jasonvv/jdData/kw.xlsx&apos;;</span><br><span class="line">    $reader = new Xlsx();</span><br><span class="line">    $spreadsheet = $reader-&gt;load($inputFileName);</span><br><span class="line">    $worksheet = $spreadsheet-&gt;getActiveSheet();</span><br><span class="line">    $client = new Client();</span><br><span class="line">    $count = 0;</span><br><span class="line">    for ($i = 1; $i &lt;= 23682; $i++) &#123;</span><br><span class="line">        $key = $worksheet-&gt;getCell(&apos;A&apos;.$i)-&gt;getFormattedValue();</span><br><span class="line">        echo &apos;正在抓取第 &apos;.($i - 1).&apos; 个关键词&apos;.PHP_EOL;</span><br><span class="line">        $spreadsheet = gojd($key,$i,$spreadsheet,$client);</span><br><span class="line">        $count++;</span><br><span class="line">        if ($count == 100) &#123;</span><br><span class="line">            $writer = IOFactory::createWriter($spreadsheet, &apos;Xlsx&apos;);</span><br><span class="line">            $writer-&gt;save(&apos;/Users/jasonvv/jdData/kw.xlsx&apos;);</span><br><span class="line">            unset($writer);</span><br><span class="line">            echo &quot;正在写入数据100条,已写数据总共&quot;.($i - 1).&apos;条&apos;.PHP_EOL;</span><br><span class="line">            $count = 0;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    echo &quot;写入完成&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后来写一下抓取的方法，抓取关键词的总商品数和前八个搜索结果的价格都没问题，但是商品的评论数拿不到，什么原因呢，打开 chrome 的控制台观察了一下，发现 Network 里面有一个特殊的 ajax 请求，拿到它的Request URL:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://club.jd.com/comment/productCommentSummaries.action?referenceIds=36766083425&amp;callback=jQuery3479769&amp;_=1567248103508</span><br></pre></td></tr></table></figure>
+
+<p>打开发现是一个 json 对象： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;CommentsCount&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;SkuId&quot;: 36766083425,</span><br><span class="line">            &quot;ProductId&quot;: 36766083425,</span><br><span class="line">            &quot;ShowCount&quot;: 70,</span><br><span class="line">            &quot;ShowCountStr&quot;: &quot;70+&quot;,</span><br><span class="line">            &quot;CommentCountStr&quot;: &quot;1.3万+&quot;,</span><br><span class="line">            &quot;CommentCount&quot;: 13000,</span><br><span class="line">            &quot;AverageScore&quot;: 5,</span><br><span class="line">            &quot;DefaultGoodCountStr&quot;: &quot;1.1万+&quot;,</span><br><span class="line">            &quot;DefaultGoodCount&quot;: 11000,</span><br><span class="line">            &quot;GoodCountStr&quot;: &quot;6000+&quot;,</span><br><span class="line">            &quot;GoodCount&quot;: 6000,</span><br><span class="line">            &quot;AfterCount&quot;: 10,</span><br><span class="line">            &quot;OneYear&quot;: 0,</span><br><span class="line">            &quot;AfterCountStr&quot;: &quot;10+&quot;,</span><br><span class="line">            &quot;VideoCount&quot;: 10,</span><br><span class="line">            &quot;VideoCountStr&quot;: &quot;10&quot;,</span><br><span class="line">            &quot;GoodRate&quot;: 0.99,</span><br><span class="line">            &quot;GoodRateShow&quot;: 99,</span><br><span class="line">            &quot;GoodRateStyle&quot;: 148,</span><br><span class="line">            &quot;GeneralCountStr&quot;: &quot;20+&quot;,</span><br><span class="line">            &quot;GeneralCount&quot;: 20,</span><br><span class="line">            &quot;GeneralRate&quot;: 0.007,</span><br><span class="line">            &quot;GeneralRateShow&quot;: 1,</span><br><span class="line">            &quot;GeneralRateStyle&quot;: 2,</span><br><span class="line">            &quot;PoorCountStr&quot;: &quot;20+&quot;,</span><br><span class="line">            &quot;PoorCount&quot;: 20,</span><br><span class="line">            &quot;SensitiveBook&quot;: 0,</span><br><span class="line">            &quot;PoorRate&quot;: 0.003,</span><br><span class="line">            &quot;PoorRateShow&quot;: 0,</span><br><span class="line">            &quot;PoorRateStyle&quot;: 0</span><br><span class="line">        &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>找到这个 api 就很好办了，先拿到商品的 data-sku ，然后把它赋给 referenceIds，拿 http 客户端请求一下，拿到这个 json 然后取我们要的 CommentCount ，数据基本都拿到了，贴一下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line">function gojd($key, $row, $spreadsheet, $client) &#123;</span><br><span class="line">    $worksheet = $spreadsheet-&gt;getActiveSheet();</span><br><span class="line">    $data = urlencode($key);</span><br><span class="line">    $base_uri = &apos;https://search.jd.com/Search?keyword=&apos;.$data.&apos;&amp;enc=utf-8&apos;;</span><br><span class="line"></span><br><span class="line">    $response = $client-&gt;request(&apos;GET&apos;, $base_uri, [</span><br><span class="line">        &apos;headers&apos; =&gt; [</span><br><span class="line">            &apos;authority&apos; =&gt; &apos;search.jd.com&apos;,</span><br><span class="line">            &apos;upgrade-insecure-requests&apos; =&gt; &apos;1&apos;,</span><br><span class="line">            &apos;user-agent&apos; =&gt; &apos;balabalabala...&apos;,</span><br><span class="line">            &apos;referer&apos; =&gt; &apos;https://search.jd.com/Search&apos;,</span><br><span class="line">            &apos;accept-encoding&apos; =&gt; &apos;gzip, deflate, br&apos;,</span><br><span class="line">            &apos;accept-language&apos; =&gt; &apos;zh-CN,zh;q=0.9,en;q=0.8&apos;,</span><br><span class="line">            &apos;cookie&apos; =&gt; &apos;balabalabala...&apos;</span><br><span class="line">        ]</span><br><span class="line">    ]);</span><br><span class="line">    $res = $response-&gt;getBody()-&gt;getContents();</span><br><span class="line"></span><br><span class="line">    $html_dom = new ParserDom($res);</span><br><span class="line"></span><br><span class="line">    try&#123;</span><br><span class="line">        $resCount = $html_dom-&gt;find(&apos;#J_resCount&apos;,0)-&gt;getPlainText();</span><br><span class="line">    &#125; catch (Error $e) &#123;</span><br><span class="line">        return $spreadsheet;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $price = [];</span><br><span class="line">    $Comment = [];</span><br><span class="line">    $id = [];</span><br><span class="line"></span><br><span class="line">    for ($i = 0; $i &lt; 8; $i++) &#123;</span><br><span class="line">        try&#123;</span><br><span class="line">            $html_dom-&gt;find(&apos;#J_goodsList&apos;, 0)-&gt;find(&apos;li.gl-item&apos;, $i)-&gt;find(&apos;div.p-price&apos;, 0)-&gt;find(&apos;i&apos;, 0);</span><br><span class="line">        &#125; catch (Error $e) &#123;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">        $price[] = $html_dom-&gt;find(&apos;#J_goodsList&apos;, 0)-&gt;find(&apos;li.gl-item&apos;, $i)-&gt;find(&apos;div.p-price&apos;, 0)-&gt;find(&apos;i&apos;, 0)-&gt;getPlainText();</span><br><span class="line">        $id[] = $html_dom-&gt;find(&apos;#J_goodsList&apos;, 0)-&gt;find(&apos;li.gl-item&apos;, $i)-&gt;getAttr(&apos;data-sku&apos;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    $res = [];</span><br><span class="line">    $requests = function ($total) use ($id)&#123;</span><br><span class="line">        $uri = &apos;https://club.jd.com/comment/productCommentSummaries.action?referenceIds=&apos;;</span><br><span class="line">        for ($i = 0; $i &lt; $total; $i++) &#123;</span><br><span class="line">            yield new Request(&apos;GET&apos;, $uri.$id[$i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    $pool = new Pool($client, $requests(count($id)), [</span><br><span class="line">        &apos;concurrency&apos; =&gt; count($id),</span><br><span class="line">        &apos;fulfilled&apos; =&gt; function ($response, $index) use(&amp;$res,&amp;$Comment) &#123;</span><br><span class="line">            $res[$index] = $response-&gt;getBody()-&gt;getContents();</span><br><span class="line">        &#125;,</span><br><span class="line">        &apos;rejected&apos; =&gt; function ($reason, $index) &#123;</span><br><span class="line">            echo &apos;!!!&apos;.$index.&apos;:&apos;.$reason;</span><br><span class="line">        &#125;,</span><br><span class="line">    ]);</span><br><span class="line"></span><br><span class="line">    $promise = $pool-&gt;promise();</span><br><span class="line">    $promise-&gt;wait();</span><br><span class="line"></span><br><span class="line">    ksort($res);</span><br><span class="line">    array_map(function ($item) use (&amp;$Comment)&#123;</span><br><span class="line">        $Comment[] = json_decode(utf8_encode($item))-&gt;CommentsCount[0]-&gt;CommentCount;</span><br><span class="line">    &#125;,$res);</span><br><span class="line"></span><br><span class="line">    unset($html_dom);</span><br><span class="line"></span><br><span class="line">    $worksheet-&gt;getCell(strtoupper(chr(66)).$row)-&gt;setValue($resCount);</span><br><span class="line">    echo &apos;resCount: &apos;.$resCount.PHP_EOL;</span><br><span class="line">    for ($i = 0, $col=71; $i &lt; count($id); $i++) &#123;</span><br><span class="line">        echo &apos;price:&apos;.$price[$i].&apos; Comment:&apos;.$Comment[$i].PHP_EOL;</span><br><span class="line">        $worksheet-&gt;getCell(strtoupper(chr($col++)).$row)-&gt;setValue($price[$i]);</span><br><span class="line">        $worksheet-&gt;getCell(strtoupper(chr($col++)).$row)-&gt;setValue($Comment[$i]);</span><br><span class="line">    &#125;</span><br><span class="line">    echo PHP_EOL;</span><br><span class="line">    return $spreadsheet;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跑了脚本后发现，由于网络原因或者其他因素的影响，有一些关键词没抓到，这个时候就想到要再写一个脚本，修复一下这些数据，贴一下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">function docheck() &#123;</span><br><span class="line">    $inputFileName = &apos;/Users/jasonvv/jdData/kw.xlsx&apos;;</span><br><span class="line">    $reader = new Xlsx();</span><br><span class="line">    $spreadsheet = $reader-&gt;load($inputFileName);</span><br><span class="line">    $worksheet = $spreadsheet-&gt;getActiveSheet();</span><br><span class="line">    $client = new Client();</span><br><span class="line">    $checks = [];</span><br><span class="line">    $count = 0;</span><br><span class="line">    for ($i = 0; $i &lt;= 23682; $i++) &#123;</span><br><span class="line">        $point = $worksheet-&gt;getCell(&apos;G&apos;.$i)-&gt;getFormattedValue();</span><br><span class="line">        $key = $worksheet-&gt;getCell(&apos;A&apos;.$i)-&gt;getFormattedValue();</span><br><span class="line">        if ($point==null) &#123;</span><br><span class="line">            $checks[] = $i;</span><br><span class="line">            $checks[] = $key;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    $isWrite = 0;</span><br><span class="line"></span><br><span class="line">    for ($j = 0; $j &lt; count($checks); $j=$j+2) &#123;</span><br><span class="line">        $row = $checks[$j];</span><br><span class="line">        $key = $checks[$j+1];</span><br><span class="line">        echo &apos;正在抓取第 &apos;.($row - 1).&apos; 个关键词&apos;.PHP_EOL;</span><br><span class="line">        $spreadsheet = gojd($key,$row,$spreadsheet,$client);</span><br><span class="line">        $isWrite = 0;</span><br><span class="line">        $count++;</span><br><span class="line">        if ($count == 100) &#123;</span><br><span class="line">            $writer = IOFactory::createWriter($spreadsheet, &apos;Xlsx&apos;);</span><br><span class="line">            $writer-&gt;save(&apos;/Users/jasonvv/jdData/kw.xlsx&apos;);</span><br><span class="line">            unset($writer);</span><br><span class="line">            echo &quot;正在写入数据100条&quot;.PHP_EOL;</span><br><span class="line">            $isWrite = 1;</span><br><span class="line">            $count = 0;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    if ($isWrite==0) &#123;</span><br><span class="line">        $writer = IOFactory::createWriter($spreadsheet, &apos;Xlsx&apos;);</span><br><span class="line">        $writer-&gt;save(&apos;/Users/jasonvv/jdData/kw.xlsx&apos;);</span><br><span class="line">    &#125;</span><br><span class="line">    echo &quot;修复完成&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跑了这个修复的脚本，数据就完整了。</p>
 
       
 
@@ -187,7 +215,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随想</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">实战记录</a>
         		</li>
       		
 		</ul>
@@ -199,7 +227,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/心得//" class="article-tag-list-link color3">心得</a>
+        			<a href="/categories/后端笔记//" class="article-tag-list-link color5">后端笔记</a>
         		</li>
       		
 		</ul>
@@ -217,18 +245,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/通过关键词抓取京东数据/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          通过关键词抓取京东数据
-        
-      </div>
-    </a>
   
-  
-    <a href="/2018/怎么逼自己成为一个上进的人/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">怎么逼自己成为一个上进的人</div>
+    <a href="/2018/做自己喜欢的事/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">做自己喜欢的事</div>
       <i class="icon-circle-right"></i>
     </a>
   
